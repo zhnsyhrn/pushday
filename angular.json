@@ -29,11 +29,19 @@
           },
           "configurations": {
             "production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
               "budgets": [
                 { "type": "initial", "maximumWarning": "2MB", "maximumError": "5MB" },
                 { "type": "anyComponentStyle", "maximumWarning": "4kB", "maximumError": "20kB" }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "optimization": false,
@@ -59,7 +67,9 @@
           "options": {
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
-            "assets": [{ "glob": "**/*", "input": "public", "output": "/" }],
+            "assets": [
+              { "glob": "**/*", "input": "public", "output": "/" }
+            ],
             "styles": ["src/styles.css"],
             "scripts": []
           }
