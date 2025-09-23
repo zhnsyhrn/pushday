@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PeriodSwitch } from '../../../shared/period-switch/period-switch';
 import { LocalDataService } from '../../../core/local-data.service';
+import { SharedDiaryService } from '../../../core/shared-diary.service';
 import { EntryCard } from '../../../shared/entry-card/entry-card';
 import { FoodEntry } from '../../../core/models';
 import { CommonModule } from '@angular/common';
@@ -52,26 +53,47 @@ import { CommonModule } from '@angular/common';
     <div *ngIf="showShareModal" class="modal-overlay" (click)="closeShareModal()">
       <div class="modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>{{ shareSuccess ? 'Link Copied!' : 'Share Diary' }}</h3>
+          <h3>{{ shareSuccess ? 'Share Link Copied!' : 'Share Your Diary' }}</h3>
           <button type="button" class="close-button" (click)="closeShareModal()" aria-label="Close">
             <span>×</span>
           </button>
         </div>
         <div class="modal-body">
           <p *ngIf="!shareSuccess">
-            Click below to copy your diary link to share with others.
+            Share your diary with nutritionists, trainers, or healthcare providers.
+            They'll be able to view all your entries from the past 30 days.
           </p>
+          <div *ngIf="!shareSuccess" class="share-preview">
+            <div class="preview-content">
+              <h4>Your Diary Summary</h4>
+              <div class="preview-stats">
+                <div class="stat">
+                  <span class="stat-number">{{ data.entries().length }}</span>
+                  <span class="stat-label">Total Entries</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-number">{{ foodItemsCount() }}</span>
+                  <span class="stat-label">Food Items</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-number">{{ drinkItemsCount() }}</span>
+                  <span class="stat-label">Drink Items</span>
+                </div>
+              </div>
+            </div>
+          </div>
           <p *ngIf="shareSuccess">
-            Your diary link has been copied to clipboard! You can now share it with others.
+            Your shareable diary link has been copied to clipboard! Anyone with this link can view your diary entries for 30 days.
           </p>
           <div class="modal-actions">
-            <button type="button" class="primary-button" (click)="copyShareLink()">
-              {{ shareSuccess ? 'Copy Again' : 'Copy Link' }}
+            <button type="button" class="primary-button" (click)="shareDiary()">
+              {{ shareSuccess ? 'Copy Link Again' : 'Generate Share Link' }}
             </button>
           </div>
         </div>
       </div>
     </div>
+
   `,
   styles: `
     .page-header {
@@ -278,15 +300,162 @@ import { CommonModule } from '@angular/common';
       background: color-mix(in srgb, var(--primary) 10%, transparent);
       color: var(--primary);
     }
+
+    /* Share Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: var(--space-4);
+    }
+    .modal {
+      background: var(--background);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow: hidden;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      transition: background-color 0.2s;
+    }
+    .close-button:hover {
+      background: var(--muted);
+      color: var(--text);
+    }
+    .modal-body {
+      padding: var(--space-4);
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .modal-body p {
+      margin: 0 0 var(--space-3) 0;
+      color: var(--text-muted);
+    }
+    .share-preview {
+      background: var(--muted);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+    .preview-content h4 {
+      margin: 0 0 var(--space-3) 0;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .preview-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: var(--space-3);
+    }
+    .stat {
+      text-align: center;
+      background: var(--background);
+      border-radius: var(--radius);
+      padding: var(--space-2);
+      border: 1px solid var(--border);
+    }
+    .stat-number {
+      display: block;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .stat-label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .modal-actions {
+      margin-top: var(--space-4);
+      display: flex;
+      justify-content: center;
+    }
+    .primary-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .primary-button:hover {
+      background: color-mix(in srgb, var(--primary) 90%, black);
+    }
+
+    /* Desktop Modal Styles */
+    @media (min-width: 768px) {
+      .modal-overlay {
+        padding: var(--space-5);
+      }
+      .modal-header {
+        padding: var(--space-5);
+      }
+      .modal-header h3 {
+        font-size: 20px;
+      }
+      .modal-body {
+        padding: var(--space-5);
+      }
+      .preview-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .stat-number {
+        font-size: 24px;
+      }
+    }
   `
 })
 export class DiaryPage {
   protected period: string | null = null;
   protected showShareModal = false;
-  protected shareUrl = '';
   protected shareSuccess = false;
 
-  constructor(private route: ActivatedRoute, protected data: LocalDataService) {
+  constructor(
+    private route: ActivatedRoute,
+    protected data: LocalDataService,
+    private sharedDiaryService: SharedDiaryService
+  ) {
     this.route.paramMap.subscribe(map => this.period = map.get('period'));
   }
 
@@ -316,33 +485,57 @@ export class DiaryPage {
     return entries;
   }
 
-  protected shareDiary(): void {
-    this.shareUrl = `${window.location.origin}/u/demo`;
-    this.showShareModal = true;
+  // Safe computed counts for template bindings
+  protected foodItemsCount(): number {
+    try {
+      return this.data.entries().filter(e => e.foodDrinkType === 'food').length;
+    } catch {
+      return 0;
+    }
   }
 
-  protected async copyShareLink(): Promise<void> {
+  protected drinkItemsCount(): number {
     try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(this.shareUrl);
-      } else {
-        this.fallbackCopyTextToClipboard(this.shareUrl);
-        return;
-      }
-      this.shareSuccess = true;
-      // Auto-close modal after 2 seconds
-      setTimeout(() => {
-        this.closeShareModal();
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-      this.fallbackCopyTextToClipboard(this.shareUrl);
+      return this.data.entries().filter(e => e.foodDrinkType === 'drink').length;
+    } catch {
+      return 0;
     }
+  }
+
+  protected shareDiary(): void {
+    const entries = this.data.entries();
+
+    if (entries.length === 0) {
+      alert('No entries to share. Add some entries first!');
+      return;
+    }
+
+    const shareId = this.sharedDiaryService.createSharedDiary(entries);
+    const shareUrl = `${window.location.origin}/shared/${shareId}`;
+
+    this.copyTextToClipboard(shareUrl);
   }
 
   protected closeShareModal(): void {
     this.showShareModal = false;
     this.shareSuccess = false;
+  }
+
+  private async copyTextToClipboard(text: string): Promise<void> {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        this.fallbackCopyTextToClipboard(text);
+        return;
+      }
+
+      // Show success feedback
+      this.showSuccessMessage('Share link copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      this.fallbackCopyTextToClipboard(text);
+    }
   }
 
   private fallbackCopyTextToClipboard(text: string): void {
@@ -356,17 +549,19 @@ export class DiaryPage {
     textArea.select();
     try {
       document.execCommand('copy');
-      this.shareSuccess = true;
-      setTimeout(() => {
-        this.closeShareModal();
-      }, 2000);
+      this.showSuccessMessage('Share link copied to clipboard!');
     } catch (err) {
       console.error('Fallback: Oops, unable to copy', err);
-      this.showShareModal = false;
-      alert('Copy failed. Please manually copy this link: ' + text);
+      alert('Copy failed. Please manually copy this link:\n\n' + text);
     }
     textArea.remove();
   }
+
+  private showSuccessMessage(message: string): void {
+    // For simplicity, show an alert. In a real app, you might use a toast notification
+    alert(message + '\n\nYou can now share this link with others!');
+  }
+
 }
 
 function startOfDay(d: Date): Date {

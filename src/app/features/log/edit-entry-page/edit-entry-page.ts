@@ -50,20 +50,20 @@ import { FoodEntry } from '../../../core/models';
           <span>Quantity</span>
           <div class="quantity-row">
             <input type="number" step="0.01" min="0" [(ngModel)]="quantityValue" name="quantityValue" />
-            <select [(ngModel)]="quantityUnit" name="quantityUnit">
-              <option value="number">number</option>
-              <option value="grams">grams</option>
-              <option value="ounces">ounces</option>
-              <option value="cups">cups</option>
-              <option value="tablespoons">tablespoons</option>
-              <option value="pieces">pieces</option>
+            <select [(ngModel)]="quantityUnit" name="quantityUnit" class="dropdown-select">
+              <option value="number">Number</option>
+              <option value="grams">Grams</option>
+              <option value="ounces">Ounces</option>
+              <option value="cups">Cups</option>
+              <option value="tablespoons">Tablespoons</option>
+              <option value="pieces">Pieces</option>
             </select>
           </div>
         </label>
 
         <label>
           Meal type
-          <select [(ngModel)]="mealType" name="mealType">
+          <select [(ngModel)]="mealType" name="mealType" class="dropdown-select">
             <option value="breakfast">Breakfast</option>
             <option value="lunch">Lunch</option>
             <option value="dinner">Dinner</option>
@@ -210,9 +210,41 @@ import { FoodEntry } from '../../../core/models';
     .form { display:grid; gap: var(--space-4); max-width: 640px; }
     label { display:grid; gap: var(--space-2); }
     input, select, textarea {
-      padding: 10px 12px; border:1px solid var(--border); border-radius: var(--radius);
-      background: var(--surface, #fff); color: var(--text);
+      width: 100%; padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius);
+      font-size: 16px; background: var(--background); color: var(--text);
     }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    /* Custom dropdown styling to match log-page */
+    select {
+      -webkit-appearance: none; /* Safari */
+      -moz-appearance: none;    /* Firefox */
+      appearance: none;
+      padding-right: 44px; /* room for chevron */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239aa0a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      cursor: pointer;
+    }
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+    select.error {
+      border-color: #ff4757;
+      background-color: color-mix(in srgb, #ff4757 5%, transparent);
+    }
+
+    /* Error states */
+    input.error, textarea.error, select.error {
+      border-color: #ff4757;
+      background-color: color-mix(in srgb, #ff4757 5%, transparent);
+    }
+
     /* Segmented control styles to match log page */
     .segmented { display:flex; gap: var(--space-3); }
     .segment {
@@ -221,12 +253,12 @@ import { FoodEntry } from '../../../core/models';
       align-items: center;
       justify-content: center;
       gap: var(--space-2);
-      padding: 10px 12px;
-      background: var(--surface, #fff);
+      padding: 12px 16px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      cursor: pointer;
+      background: var(--background);
       color: var(--text);
+      cursor: pointer;
       transition: all 0.15s ease-in-out;
     }
     .segment .icon { font-size: 18px; }
@@ -234,11 +266,30 @@ import { FoodEntry } from '../../../core/models';
       background: color-mix(in srgb, var(--primary) 12%, transparent);
       border-color: var(--primary);
       color: var(--primary);
+      box-shadow: inset 0 0 0 1px var(--primary);
       font-weight: 600;
     }
     .segment:focus-visible { outline: 2px solid color-mix(in srgb, var(--primary) 35%, transparent); outline-offset: 2px; }
-    .quantity-row { display:flex; gap: var(--space-2); }
-    .quantity-row input { flex: 1; }
+    /* Quantity input styling */
+    .quantity-row {
+      display: flex;
+      gap: var(--space-2);
+    }
+    .quantity-row input {
+      flex: 1;
+    }
+    .quantity-row select {
+      flex: 0 0 120px;
+    }
+
+    /* Error message styling */
+    .error-message {
+      color: #ff4757;
+      font-size: 14px;
+      margin-top: 4px;
+      display: block;
+    }
+
     .photo-section { display:flex; align-items: flex-start; gap: var(--space-4); }
     .photo-preview img { width: 96px; height: 96px; object-fit: cover; border-radius: var(--radius); border:1px solid var(--border); }
     .photo-empty { width: 96px; height: 96px; border:1px dashed var(--border); border-radius: var(--radius); display:grid; place-items:center; color: var(--text-muted); gap: 6px; font-size: 12px; }
@@ -389,6 +440,7 @@ import { FoodEntry } from '../../../core/models';
     .photo-option-content h4 { margin: 0; font-size: 16px; }
     .photo-option-content p { margin: 0; color: var(--text-muted); font-size: 13px; }
 
+    /* Desktop styles */
     @media (min-width: 768px) {
       .page-header { padding: var(--space-5); }
       .content { padding: var(--space-5); padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
@@ -397,6 +449,20 @@ import { FoodEntry } from '../../../core/models';
       .actions > button.reset-button { font-size: 16px; min-height: 48px; background: transparent; border: 1px solid #ff4757; border-radius: var(--radius); font-weight: 600; }
       .actions > button.reset-button:hover { background: #ff4757; color: #fff; border-color: #ff4757; }
       .actions { padding-left: var(--space-5); padding-right: var(--space-5); }
+      input, select, textarea {
+        padding: var(--space-4);
+        font-size: 16px;
+      }
+      select {
+        padding-right: 52px; /* a bit more room for chevron on desktop */
+        background-position: right 16px center;
+      }
+      .quantity-row select {
+        flex: 0 0 140px;
+      }
+      textarea {
+        min-height: 120px; /* Larger on desktop */
+      }
     }
   `
 })

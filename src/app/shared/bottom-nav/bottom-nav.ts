@@ -6,65 +6,38 @@ import { RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/ro
   selector: 'app-bottom-nav',
   imports: [RouterLink, RouterLinkActive, NgIf],
   template: `
-    <nav class="bottom-nav" aria-label="Bottom Navigation" *ngIf="!hideNav()">
-      <a routerLink="/diary/daily" routerLinkActive="active" aria-label="Diary">Diary</a>
-      <a routerLink="/log" routerLinkActive="active" aria-label="Log">Log</a>
-      <a routerLink="/u/demo" routerLinkActive="active" aria-label="Public">Public</a>
+    <nav
+      *ngIf="!hideNav()"
+      aria-label="Bottom Navigation"
+      class="fixed bottom-0 left-0 right-0 z-[1000] flex min-h-14 items-center justify-around gap-2 border-t border-border bg-background px-4 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] md:justify-center md:gap-5 md:px-5"
+    >
+      <a
+        routerLink="/diary/daily"
+        routerLinkActive="text-[color:var(--primary)] bg-[color:color-mix(in_srgb,_var(--primary)_10%,_transparent)]"
+        aria-label="Diary"
+        class="flex max-w-20 flex-1 min-h-11 flex-col items-center justify-center rounded-[var(--radius)] px-2 text-xs font-medium text-[color:var(--text-muted)] transition-colors hover:text-[color:var(--text)] md:min-w-[100px] md:max-w-[120px] md:text-sm"
+      >
+        Diary
+      </a>
+      <a
+        routerLink="/log"
+        routerLinkActive="text-[color:var(--primary)] bg-[color:color-mix(in_srgb,_var(--primary)_10%,_transparent)]"
+        aria-label="Log"
+        class="flex max-w-20 flex-1 min-h-11 flex-col items-center justify-center rounded-[var(--radius)] px-2 text-xs font-medium text-[color:var(--text-muted)] transition-colors hover:text-[color:var(--text)] md:min-w-[100px] md:max-w-[120px] md:text-sm"
+      >
+        Log
+      </a>
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="text-[color:var(--primary)] bg-[color:color-mix(in_srgb,_var(--primary)_10%,_transparent)]"
+        aria-label="Dashboard"
+        class="flex max-w-20 flex-1 min-h-11 flex-col items-center justify-center rounded-[var(--radius)] px-2 text-xs font-medium text-[color:var(--text-muted)] transition-colors hover:text-[color:var(--text)] md:min-w-[100px] md:max-w-[120px] md:text-sm"
+      >
+        Dashboard
+      </a>
     </nav>
   `,
-  styles: `
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      gap: var(--space-2);
-      border-top: 1px solid var(--border);
-      background: var(--background);
-      padding: var(--space-3) var(--space-4);
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-      z-index: 1000;
-      min-height: 56px;
-    }
-    a {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 500;
-      padding: var(--space-2);
-      border-radius: var(--radius);
-      transition: all 0.2s;
-      min-height: 44px;
-      flex: 1;
-      max-width: 80px;
-    }
-    a.active {
-      color: var(--primary);
-      background: color-mix(in srgb, var(--primary) 10%, transparent);
-    }
-    a:hover { color: var(--text); }
-
-    /* Desktop styles */
-    @media (min-width: 768px) {
-      .bottom-nav {
-        justify-content: center;
-        gap: var(--space-5);
-        padding: var(--space-3) var(--space-5);
-      }
-      a {
-        font-size: 14px;
-        min-width: 100px;
-        max-width: 120px;
-      }
-    }
-  `
+  styles: ``
 })
 export class BottomNav {
   private router = inject(Router);

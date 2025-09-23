@@ -1,4 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LocalDataService } from '../../../core/local-data.service';
@@ -6,10 +7,13 @@ import { FoodEntry } from '../../../core/models';
 
 @Component({
   selector: 'app-log-page',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   template: `
     <section class="log-form">
-      <h2>Quick Add</h2>
+      <header class="page-header">
+        <a routerLink="/diary/daily" class="back-link" aria-label="Back">Back</a>
+        <h2>Quick Add</h2>
+      </header>
       <form (ngSubmit)="save()">
         <div class="photo-upload" (click)="openPhotoModal()">
           <!-- Hidden file inputs for camera and gallery -->
@@ -226,7 +230,25 @@ import { FoodEntry } from '../../../core/models';
   `,
   styles: `
     .log-form { padding: var(--space-4); display:block; }
-    h2 { margin-bottom: var(--space-5); }
+    .page-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-5);
+    }
+    .page-header h2 {
+      grid-column: 2;
+      justify-self: center;
+      margin: 0;
+    }
+    .back-link {
+      grid-column: 1;
+      justify-self: start;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
 
     /* Photo Upload Area */
     .photo-upload {
@@ -425,10 +447,7 @@ import { FoodEntry } from '../../../core/models';
         max-width: 600px;
         margin: 0 auto;
       }
-      h2 {
-        font-size: 24px;
-        margin-bottom: var(--space-5);
-      }
+      .page-header h2 { font-size: 24px; }
       .photo-box {
         width: 250px;
         height: 250px; /* Larger square on desktop */

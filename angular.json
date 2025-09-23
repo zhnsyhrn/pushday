@@ -3,7 +3,8 @@
   "version": 1,
   "cli": {
     "packageManager": "npm",
-    "analytics": false
+    "analytics": false,
+    "defaultProjectName": "pushday"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -76,6 +77,5 @@
         }
       }
     }
-  },
-  "defaultProject": "pushday"
+  }
 }

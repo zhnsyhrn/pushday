@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Global mobile-first styles */
 :root {
   --space-1: 4px;
@@ -41,6 +45,24 @@ section {
 h1, h2, h3 { margin: 0; font-weight: 600; }
 button { font-family: inherit; }
 input, textarea, select { font-family: inherit; }
+
+/* Tailwind component layer: primitive UI tokens */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md border border-transparent px-4 py-2 text-sm font-semibold transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40;
+  }
+  .btn-primary { @apply btn bg-primary text-white hover:bg-primary/90; }
+  .btn-ghost { @apply btn bg-transparent text-gray-900 dark:text-white border-gray-200 hover:bg-gray-100; }
+  .input {
+    @apply w-full rounded-md border border-gray-200 bg-white px-3 py-2 text-base shadow-sm placeholder:text-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20;
+  }
+  .select { @apply input pr-10; }
+  .textarea { @apply input min-h-[80px] resize-y; }
+  .segmented { @apply inline-flex w-full gap-3; }
+  .segment {
+    @apply flex-1 inline-flex items-center justify-center gap-2 rounded-md border border-gray-200 bg-white px-4 py-3 text-gray-900 transition hover:bg-gray-50 data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:border-primary;
+  }
+}
 
 /* Ensure proper spacing for mobile */
 * {

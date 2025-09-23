@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   selector: 'app-entry-card',
   imports: [CommonModule],
   template: `
-    <article class="card" (click)="closeMenu()">
+    <article class="card" (click)="goToDetails()">
       <div class="meta">
         <div class="header-row">
           <strong>{{ entry?.name }}</strong>
@@ -544,6 +544,12 @@ export class EntryCard {
 
   closeMenu(): void {
     if (this.showMenu) this.showMenu = false;
+  }
+
+  goToDetails(): void {
+    this.closeMenu();
+    if (!this.entry?.id) return;
+    this.router.navigate(['/entry', this.entry.id]);
   }
 
   onDeleteClick(): void {
